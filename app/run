@@ -1,0 +1,32 @@
+#!/bin/bash
+
+DELAY=7
+
+while [ 1 ];
+do
+	ret=$(curl -s http://192.168.178.29:8080/goform/formMainZone_MainZoneXmlStatusLite.xml)
+	sosel=$(echo "$ret" | grep InputFuncSelect | sed -e 's/^.*<value>//' -e 's/<.*$//')
+	pow=$(echo "$ret" | grep Power | sed -e 's/^.*<value>//' -e 's/<.*$//')
+	if [ "$pow" != "ON" ]; then
+		echo "AVR off"
+		redis-cli -h dax set "AVR-Video-Selected/v0/target" "0"
+		sleep $DELAY
+		continue
+	fi
+	von=0
+	if [ "$sosel" = "BD" ]; then
+		von=1
+	fi
+	if [ "$sosel" = "SAT/CBL" ]; then
+		von=1
+	fi
+	if [ "$sosel" = "MPLAY" ]; then
+		von=1
+	fi
+	if [ "$sosel" = "AUX1" ]; then
+		von=1
+	fi
+	echo "$sosel $von"
+	redis-cli -h dax set "AVR-Video-Selected/v0/target" "$von"
+	sleep $DELAY
+done
