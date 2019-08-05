@@ -1,15 +1,33 @@
 #!/bin/bash
 
+AVR_IP="192.168.178.29"
 DELAY=7
+lvon=9
+
+function setVon {
+	if [ "$1" = "$lvon" ]; then
+		return
+	fi
+	redis-cli -h dax set "AVR-Video-Active/v0/target" "$1"
+	lvon="$1"
+}
+
+function getVsel {
+	ping -c 1 -w 1 $AVR_IP
+	if [ $? -eq 0 ]; then
+		curl -s http://$AVR_IP:8080/goform/formMainZone_MainZoneXmlStatusLite.xml
+		return
+	fi
+	echo "none"
+}
 
 while [ 1 ];
 do
-	ret=$(curl -s http://192.168.178.29:8080/goform/formMainZone_MainZoneXmlStatusLite.xml)
+	ret=$(getVsel)
 	sosel=$(echo "$ret" | grep InputFuncSelect | sed -e 's/^.*<value>//' -e 's/<.*$//')
 	pow=$(echo "$ret" | grep Power | sed -e 's/^.*<value>//' -e 's/<.*$//')
 	if [ "$pow" != "ON" ]; then
-		echo "AVR off"
-		redis-cli -h dax set "AVR-Video-Selected/v0/target" "0"
+		setVon 0
 		sleep $DELAY
 		continue
 	fi
@@ -27,6 +45,6 @@ do
 		von=1
 	fi
 	echo "$sosel $von"
-	redis-cli -h dax set "AVR-Video-Selected/v0/target" "$von"
+	setVon "$von"
 	sleep $DELAY
 done
