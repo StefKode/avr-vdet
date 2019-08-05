@@ -12,18 +12,9 @@ function setVon {
 	lvon="$1"
 }
 
-function getVsel {
-	ping -c 1 -w 1 $AVR_IP
-	if [ $? -eq 0 ]; then
-		curl -s http://$AVR_IP:8080/goform/formMainZone_MainZoneXmlStatusLite.xml
-		return
-	fi
-	echo "none"
-}
-
 while [ 1 ];
 do
-	ret=$(getVsel)
+	ret=$(curl -s http://$AVR_IP:8080/goform/formMainZone_MainZoneXmlStatusLite.xml)
 	sosel=$(echo "$ret" | grep InputFuncSelect | sed -e 's/^.*<value>//' -e 's/<.*$//')
 	pow=$(echo "$ret" | grep Power | sed -e 's/^.*<value>//' -e 's/<.*$//')
 	if [ "$pow" != "ON" ]; then
