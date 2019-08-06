@@ -3,24 +3,34 @@
 on=9
 lon=8
 
-while [ 1 ];
-do
+function fireIsOn {
 	ping -c 1 -w 1 FireTV-Wohnzimmer
 	t1=$?
+	sleep 1
 	ping -c 1 -w 1 FireTV-Wohnzimmer
 	t2=$?
+	sleep 1
 	ping -c 1 -w 1 FireTV-Wohnzimmer
 	t3=$?
+	sleep 1
 	if [ $[ $t1 + $t2 + $t3 ] -lt 3 ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+while [ 1 ];
+do
+	fireIsOn
+	if [ $? -eq 0 ]; then
 		on=1
 	else
 		on=0
 	fi
-	if [ $on -ne $lon ]; then
-		if [ $on -eq 0 ]; then
-			curl "http://192.168.178.29:8080/goform/formiPhoneAppPower.xml?1+PowerStandby"
-		fi
+	if [ $on -eq 0 -a $lon -eq 1 ]; then
+		curl "http://192.168.178.29:8080/goform/formiPhoneAppPower.xml?1+PowerStandby"
 	fi
 	lon=$on
-	sleep 7
+	sleep 5
 done
