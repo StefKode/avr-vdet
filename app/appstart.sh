@@ -65,4 +65,4 @@ fi | tee -a $TRACE_LOG
 # App Startup
 
 ./run &
-./powdet &
+#./powdet &
