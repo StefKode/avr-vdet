@@ -1,1 +1,1 @@
-appts -p dax -mount   avr-vdet -dir ./target
+appts -p rpi -mount   avr-vdet -dir ./target

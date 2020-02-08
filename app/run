@@ -1,5 +1,12 @@
 #!/bin/bash
 
+RED_IP=$(./conf_redis_host)
+
+if [ "$RED_IP" = "" ]; then
+	echo "$(date): no redis host, abort" | tee -a /home/app/trace.log
+	exit 1
+fi
+
 AVR_IP="192.168.178.29"
 DELAY=7
 lvon=9
@@ -13,7 +20,7 @@ function setVon {
 	if [ "$1" = "$lvon" ]; then
 		return
 	fi
-	redis-cli -h dax set "AVR-Video-Active/v0/target" "$1"
+	redis-cli -h $RED_IP set "AVR-Video-Active/v0/target" "$1"
 	if [ "$1" = "1" ]; then
 		setTVVolume
 	fi

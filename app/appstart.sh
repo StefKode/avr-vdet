@@ -5,8 +5,8 @@
 ############################################################
 # USER DEFINITIONS
 
-VERSION=0.2
-PACKAGES="vim redis-tools"
+VERSION=0.3
+PACKAGES="vim curl redis-tools"
 ADDGROUP=
 
 ############################################################

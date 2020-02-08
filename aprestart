@@ -1,1 +1,1 @@
-appts -p dax -restart avr-vdet
+appts -p rpi -restart avr-vdet

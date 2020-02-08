@@ -1,0 +1,12 @@
+#!/bin/bash
+
+SETTINGS=/appshelf/cfg/all/conf0/settings 
+
+if [ ! -e "$SETTINGS" ]; then
+	echo "$(date): settings not found" >> /home/app/trace.log
+	exit 1
+fi
+
+var=$(grep '^REDIS_IO_HOST=' $SETTINGS | awk -F= '{print $2}')
+
+echo "$var"

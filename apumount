@@ -1,1 +1,1 @@
-appts -p dax -umount ./target
+appts -p rpi -umount ./target
